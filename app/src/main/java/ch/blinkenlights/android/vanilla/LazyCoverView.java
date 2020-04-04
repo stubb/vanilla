@@ -29,7 +29,9 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.LruCache;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * LazyCoverView implements a 'song-aware' ImageView
@@ -231,6 +233,17 @@ public class LazyCoverView extends ImageView
 		protected int sizeOf(CoverCache.CoverKey key, Bitmap value) {
 			return value.getByteCount();
 		}
+	}
+
+	public void setCoverOnClickListener(View.OnClickListener listener) {
+		Context context = getContext();
+		CharSequence text = "Lazy toast!";
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
+
+		this.setOnClickListener(listener);
 	}
 
 }

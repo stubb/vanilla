@@ -38,6 +38,8 @@ import android.view.ViewGroup;
 import android.util.LruCache;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 
@@ -328,6 +330,7 @@ public class LibraryPagerAdapter
 			CoordClickListener ccl = new CoordClickListener(this);
 			view = (ListView)inflater.inflate(R.layout.listview, null);
 			ccl.registerForOnItemLongClickListener(view);
+			// TODO listener für eine row
 			view.setOnItemClickListener(this);
 			view.setTag(type);
 
@@ -871,6 +874,12 @@ public class LibraryPagerAdapter
 		Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
 		int type = (Integer)((View)view.getParent()).getTag();
 
+		CharSequence text = "x:" + x + "; y:" + y + ";";
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(view.getContext(), text, duration);
+		toast.show();
+
 		if (type == MediaUtils.TYPE_FILE) {
 			return mFilesAdapter.onCreateFancyMenu(intent, view, x, y);
 		}
@@ -879,14 +888,25 @@ public class LibraryPagerAdapter
 
 	@Override
 	public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-		Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
-		int type = (Integer)((View)view.getParent()).getTag();
+			long viewId = view.getId();
 
-		if (type == MediaUtils.TYPE_FILE) {
-			mFilesAdapter.onItemClicked(intent);
-		} else {
-			mActivity.onItemClicked(intent);
-		}
+			if (viewId == R.id.cover) {
+				CharSequence text = "position: " + position;
+				int duration = Toast.LENGTH_SHORT;
+
+				Toast toast = Toast.makeText(view.getContext(), text, duration);
+				toast.show();
+			}
+			else {
+				Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
+				int type = (Integer)((View)view.getParent()).getTag();
+				if (type == MediaUtils.TYPE_FILE) {
+					mFilesAdapter.onItemClicked(intent);
+				} else {
+					mActivity.onItemClicked(intent);
+				}
+
+			}
 	}
 
 	/**

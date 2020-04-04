@@ -35,6 +35,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.SectionIndexer;
 
 import java.text.SimpleDateFormat;
@@ -482,7 +483,7 @@ public class MediaAdapter
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent)
+	public View getView(final int position, View convertView, final ViewGroup parent)
 	{
 		DraggableRow row;
 		ViewHolder holder;
@@ -496,12 +497,21 @@ public class MediaAdapter
 			holder = new ViewHolder();
 			row.setTag(holder);
 
-			row.setDraggerOnClickListener(this);
+			//row.setDraggerOnClickListener(this);
+			//row.setCoverOnClickListener(this);
 			row.showDragger(mExpandable);
 		} else {
 			row = (DraggableRow)convertView;
 			holder = (ViewHolder)row.getTag();
 		}
+
+		// (LazyCoverView)this.findViewById(R.id.cover);
+		row.findViewById(R.id.cover).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				((ListView) parent).performItemClick(v, position, 0);
+			}
+		});
 
 		Cursor cursor = mCursor;
 		cursor.moveToPosition(position);
@@ -552,6 +562,7 @@ public class MediaAdapter
 		row.showDuration(duration != -1);
 		row.setDuration(duration);
 		row.getCoverView().setCover(mCoverCacheType, cacheId, holder.title);
+		//row.getCoverView().setCoverOnClickListener(this);
 		return row;
 	}
 
@@ -610,10 +621,10 @@ public class MediaAdapter
 	@Override
 	public void onClick(View view)
 	{
-		int id = view.getId();
+		/*int id = view.getId();
 		view = (View)view.getParent(); // get view of linear layout, not the click consumer
 		Intent intent = createData(view);
-		mActivity.onItemExpanded(intent);
+		mActivity.onItemExpanded(intent);*/
 	}
 
 	@Override
