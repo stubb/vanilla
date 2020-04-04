@@ -32,19 +32,27 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.util.LruCache;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.PopupWindow;
 
 import java.util.Arrays;
 import java.util.ArrayList;
 
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
 
 
 /**
@@ -888,25 +896,40 @@ public class LibraryPagerAdapter
 
 	@Override
 	public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-			long viewId = view.getId();
+		long viewId = view.getId();
 
-			if (viewId == R.id.cover) {
-				CharSequence text = "position: " + position;
-				int duration = Toast.LENGTH_SHORT;
+		if (viewId == R.id.cover) {
+			LayoutInflater inflater = mActivity.getLayoutInflater();
+			View popupView = inflater.inflate(R.layout.popup_window, null);
 
-				Toast toast = Toast.makeText(view.getContext(), text, duration);
-				toast.show();
-			}
-			else {
-				Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
-				int type = (Integer)((View)view.getParent()).getTag();
-				if (type == MediaUtils.TYPE_FILE) {
-					mFilesAdapter.onItemClicked(intent);
-				} else {
-					mActivity.onItemClicked(intent);
+			// create the popup window
+			int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+			int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+			boolean focusable = true; // lets taps outside the popup also dismiss it
+			final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+			// show the popup window
+			// which view you pass in doesn't matter, it is only used for the window tolken
+			popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+			// dismiss the popup window when touched
+			popupView.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					popupWindow.dismiss();
+					return true;
 				}
-
+			});
+		}
+		else {
+			Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
+			int type = (Integer)((View)view.getParent()).getTag();
+			if (type == MediaUtils.TYPE_FILE) {
+				mFilesAdapter.onItemClicked(intent);
+			} else {
+				mActivity.onItemClicked(intent);
 			}
+		}
 	}
 
 	/**
