@@ -39,7 +39,7 @@ import android.widget.Toast;
  * View updates should be triggered via setCover(type, id) to
  * instruct the view to load the cover from its own LRU cache.
  * 
- * The cover will automatically  be fetched & scaled in a background
+ * The cover will automatically be fetched & scaled in a background
  * thread on cache miss
  */
 public class LazyCoverView extends ImageView
@@ -182,6 +182,14 @@ public class LazyCoverView extends ImageView
 		}
 	}
 
+	public void setBigCover(int type, long id, String title) {
+		mExpectedKey = new CoverCache.CoverKey(type, id, CoverCache.SIZE_LARGE);
+		if (drawFromCache(mExpectedKey, false) == false) {
+			CoverMsg payload = new CoverMsg(mExpectedKey, this, title);
+			sHandler.sendMessage(sHandler.obtainMessage(MSG_CREATE_COVER, payload));
+		}
+	}
+
 	/**
 	 * Updates the view with a cached bitmap
 	 * A fallback image will be used on cache miss
@@ -234,16 +242,4 @@ public class LazyCoverView extends ImageView
 			return value.getByteCount();
 		}
 	}
-
-	public void setCoverOnClickListener(View.OnClickListener listener) {
-		Context context = getContext();
-		CharSequence text = "Lazy toast!";
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-
-		this.setOnClickListener(listener);
-	}
-
 }

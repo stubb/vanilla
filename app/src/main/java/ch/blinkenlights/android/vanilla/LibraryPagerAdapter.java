@@ -894,13 +894,36 @@ public class LibraryPagerAdapter
 		return mActivity.onCreateFancyMenu(intent, view, x, y);
 	}
 
-	@Override
-	public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-		long viewId = view.getId();
 
-		if (viewId == R.id.cover) {
+
+	@Override
+	/**
+	 *
+	 */
+	public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
+		if (view.getId() == R.id.cover) {
+			LazyCoverView base = (LazyCoverView) view;
+
 			LayoutInflater inflater = mActivity.getLayoutInflater();
 			View popupView = inflater.inflate(R.layout.popup_window, null);
+			LazyCoverView foo = popupView.findViewById(R.id.kilicover);
+			//LazyCoverView foo = popupWindow.findViewById(R.id.kilicover); //TODO in popup xml übernehmen
+			foo.setVisibility(View.VISIBLE);
+			foo.setBigCover((Integer) parent.getTag(), id, "wumpe");
+
+			// mCurrentAdapter
+
+			//int type = (Integer)((View)view.getParent().getParent().getParent()).getTag();
+
+		/*	int type = (Integer)parent.getTag();
+			int type1 = (Integer)((View)view.getParent()).getTag();
+			int type2= (Integer)((View)view.getParent().getParent()).getTag();
+			if (type == MediaUtils.TYPE_FILE) {
+				//mFilesAdapter.onItemClicked(intent);
+				mFilesAdapter.setBigCover(position, foo);
+			} else {
+				//mActivity.onItemClicked(intent);
+			}*/
 
 			// create the popup window
 			int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -920,6 +943,8 @@ public class LibraryPagerAdapter
 					return true;
 				}
 			});
+
+
 		}
 		else {
 			Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);

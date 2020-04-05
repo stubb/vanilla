@@ -73,7 +73,7 @@ public class DraggableRow extends LinearLayout implements Checkable {
 		mPmark         = (View)this.findViewById(R.id.pmark);
 		mDragger       = (ImageView)this.findViewById(R.id.dragger);
 		mDraggerPadder = (View)this.findViewById(R.id.dragger_padder);
-		mCoverView     = (LazyCoverView)this.findViewById(R.id.cover);
+		mCoverView     = (LazyCoverView)this.findViewById(R.id.cover); //TODO in popup xml übernehmen
 		super.onFinishInflate();
 	}
 

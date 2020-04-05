@@ -566,6 +566,7 @@ public class MediaAdapter
 		return row;
 	}
 
+
 	/**
 	 * Returns the type of the current limiter.
 	 *
