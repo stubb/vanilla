@@ -124,6 +124,7 @@ public class LazyCoverView extends ImageView
 	 */
 	private static final int MSG_CREATE_COVER = 61;
 	private static final int MSG_DRAW_COVER   = 62;
+	private static final int MSG_CREATE_COVER_BIG = 63;
 
 	@Override
 	public boolean handleMessage(Message message) {
@@ -146,6 +147,29 @@ public class LazyCoverView extends ImageView
 						}
 					} else {
 						bitmap = CoverBitmap.generatePlaceholderCover(mContext, CoverCache.SIZE_SMALL, CoverCache.SIZE_SMALL, payload.title);
+					}
+					if (bitmap == null) {
+						// item has no cover: return a failback
+						bitmap = sFallbackBitmap;
+					}
+				}
+				// bitmap is non null: store in LRU cache and draw it
+				sBitmapLruCache.put(payload.key, bitmap);
+				sUiHandler.sendMessage(sUiHandler.obtainMessage(MSG_DRAW_COVER, payload));
+				break;
+			}
+			case MSG_CREATE_COVER_BIG: {
+				// This message was sent due to a cache miss, but the cover might got cached in the meantime
+				Bitmap bitmap = sBitmapLruCache.get(payload.key);
+				if (bitmap == null) {
+					if (payload.key.mediaType == MediaUtils.TYPE_ALBUM) {
+						// We only display real covers for queries using the album id as key
+						Song song = MediaUtils.getSongByTypeId(mContext, payload.key.mediaType, payload.key.mediaId);
+						if (song != null) {
+							bitmap = song.getCover(mContext);
+						}
+					} else {
+						bitmap = CoverBitmap.generatePlaceholderCover(mContext, CoverCache.SIZE_LARGE, CoverCache.SIZE_LARGE, payload.title);
 					}
 					if (bitmap == null) {
 						// item has no cover: return a failback
@@ -189,7 +213,7 @@ public class LazyCoverView extends ImageView
 		if (drawFromCache(mExpectedKey, false) == false) {
 			CoverMsg payload = new CoverMsg(mExpectedKey, this, title);
 			Log.e("myTag", "This is my message, create cover");
-			sHandler.sendMessage(sHandler.obtainMessage(MSG_CREATE_COVER, payload));
+			sHandler.sendMessage(sHandler.obtainMessage(MSG_CREATE_COVER_BIG, payload));
 		}
 	}
 

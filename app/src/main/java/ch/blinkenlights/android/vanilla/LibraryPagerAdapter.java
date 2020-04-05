@@ -906,8 +906,7 @@ public class LibraryPagerAdapter
 			View popupView = inflater.inflate(R.layout.popup_window, null);
 			LazyCoverView foo = popupView.findViewById(R.id.kilicover);
 			foo.setVisibility(View.VISIBLE);
-
-			// TODO get cacheid from Mediaadapter, mCurrentAdapter ist korrekt
+			// TODO bisher nur chacheId mit kleinem Bild ...
 			long myCacheId = mCurrentAdapter.getItemId(position);
 			foo.setBigCover(/*(Integer) parent.getTag()*/MediaUtils.TYPE_ALBUM, myCacheId, "wumpe");
 
