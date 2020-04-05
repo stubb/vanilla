@@ -11,13 +11,13 @@
 		android:layout_centerInParent="true"
 		android:layout_margin="30dp"
 		android:textSize="22sp"
-		android:text="This is a popup window."/>
+		android:text="This is a popup window."/>l
 
 	<ch.blinkenlights.android.vanilla.LazyCoverView
 		android:id="@+id/kilicover"
 		android:scaleType="centerCrop"
-		android:layout_width="@dimen/cover_size"
-		android:layout_height="@dimen/cover_size"
+		android:layout_width="@dimen/cover_size_large"
+		android:layout_height="@dimen/cover_size_large"
 		android:layout_marginLeft="@dimen/cover_padding_with_pmark"
 		android:layout_gravity="center_vertical"
 		android:visibility="gone" />

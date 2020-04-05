@@ -902,14 +902,14 @@ public class LibraryPagerAdapter
 	 */
 	public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
 		if (view.getId() == R.id.cover) {
-			LazyCoverView base = (LazyCoverView) view;
-
 			LayoutInflater inflater = mActivity.getLayoutInflater();
 			View popupView = inflater.inflate(R.layout.popup_window, null);
 			LazyCoverView foo = popupView.findViewById(R.id.kilicover);
-			//LazyCoverView foo = popupWindow.findViewById(R.id.kilicover); //TODO in popup xml übernehmen
 			foo.setVisibility(View.VISIBLE);
-			foo.setBigCover((Integer) parent.getTag(), id, "wumpe");
+
+			// TODO get cacheid from Mediaadapter, mCurrentAdapter ist korrekt
+			long myCacheId = mCurrentAdapter.getItemId(position);
+			foo.setBigCover(/*(Integer) parent.getTag()*/MediaUtils.TYPE_ALBUM, myCacheId, "wumpe");
 
 			// mCurrentAdapter
 

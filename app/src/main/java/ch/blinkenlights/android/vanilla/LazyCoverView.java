@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
@@ -184,8 +185,10 @@ public class LazyCoverView extends ImageView
 
 	public void setBigCover(int type, long id, String title) {
 		mExpectedKey = new CoverCache.CoverKey(type, id, CoverCache.SIZE_LARGE);
+		Log.e("myTag", "This is my message");
 		if (drawFromCache(mExpectedKey, false) == false) {
 			CoverMsg payload = new CoverMsg(mExpectedKey, this, title);
+			Log.e("myTag", "This is my message, create cover");
 			sHandler.sendMessage(sHandler.obtainMessage(MSG_CREATE_COVER, payload));
 		}
 	}
