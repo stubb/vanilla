@@ -233,7 +233,11 @@ public class Song implements Comparable<Song> {
 	 * @return The album art or null if no album art could be found
 	 */
 	public Bitmap getCover(Context context) {
-		return getCoverInternal(context, CoverCache.SIZE_LARGE);
+		return getCoverInternal(context, CoverCache.SIZE_LARGE, true);
+	}
+
+	public Bitmap getCover(Context context, boolean front) {
+		return getCoverInternal(context, CoverCache.SIZE_LARGE, front);
 	}
 
 	/**
@@ -243,7 +247,11 @@ public class Song implements Comparable<Song> {
 	 * @return The album art or null if no album art could be found
 	 */
 	public Bitmap getSmallCover(Context context) {
-		return getCoverInternal(context, CoverCache.SIZE_SMALL);
+		return getCoverInternal(context, CoverCache.SIZE_SMALL, true);
+	}
+
+	public Bitmap getSmallCover(Context context, boolean front) {
+		return getCoverInternal(context, CoverCache.SIZE_SMALL, front);
 	}
 
 	/**
@@ -253,14 +261,14 @@ public class Song implements Comparable<Song> {
 	 * @param size The desired cover size
 	 * @return The album art or null if no album art could be found
 	 */
-	private Bitmap getCoverInternal(Context context, int size) {
+	private Bitmap getCoverInternal(Context context, int size, boolean front) {
 		if (CoverCache.mCoverLoadMode == 0 || id <= -1 || (flags & FLAG_NO_COVER) != 0)
 			return null;
 
 		if (sCoverCache == null)
 			sCoverCache = new CoverCache(context.getApplicationContext());
 
-		Bitmap cover = sCoverCache.getCoverFromSong(context, this, size);
+		Bitmap cover = sCoverCache.getCoverFromSong(context, this, size, front);
 
 		if (cover == null)
 			flags |= FLAG_NO_COVER;

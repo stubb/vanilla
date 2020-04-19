@@ -908,7 +908,7 @@ public class LibraryPagerAdapter
 			foo.setVisibility(View.VISIBLE);
 			// TODO bisher nur chacheId mit kleinem Bild ...
 			long myCacheId = mCurrentAdapter.getItemId(position);
-			foo.setBigCover(/*(Integer) parent.getTag()*/MediaUtils.TYPE_ALBUM, myCacheId, "wumpe");
+			foo.setBigCover(/*(Integer) parent.getTag()*/MediaUtils.TYPE_ALBUM, myCacheId, "wumpe", false);
 
 			// mCurrentAdapter
 

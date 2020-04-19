@@ -561,7 +561,7 @@ public class MediaAdapter
 		}
 		row.showDuration(duration != -1);
 		row.setDuration(duration);
-		row.getCoverView().setCover(mCoverCacheType, cacheId, holder.title);
+		row.getCoverView().setCover(mCoverCacheType, cacheId, holder.title, true);
 		//row.getCoverView().setCoverOnClickListener(this);
 		return row;
 	}
