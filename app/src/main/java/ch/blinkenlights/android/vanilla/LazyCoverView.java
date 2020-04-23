@@ -28,11 +28,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.LruCache;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * LazyCoverView implements a 'song-aware' ImageView
@@ -79,11 +76,13 @@ public class LazyCoverView extends ImageView
 		public LazyCoverView view;      // The view we are updating
 		public String title;            // The title of this view, used for Initial-Covers
 		public boolean front;
-		CoverMsg(CoverCache.CoverKey key, LazyCoverView view, String title, boolean front) {
+		public int coverSize;
+		CoverMsg(CoverCache.CoverKey key, LazyCoverView view, String title, boolean front, int coverSize) {
 			this.key = key;
 			this.view = view;
 			this.title = title;
 			this.front = front;
+			this.coverSize = coverSize;
 		}
 		/**
 		 * Returns true if the view still requires updating
@@ -126,7 +125,6 @@ public class LazyCoverView extends ImageView
 	 */
 	private static final int MSG_CREATE_COVER = 61;
 	private static final int MSG_DRAW_COVER   = 62;
-	private static final int MSG_CREATE_COVER_BIG = 63;
 
 	@Override
 	public boolean handleMessage(Message message) {
@@ -145,33 +143,10 @@ public class LazyCoverView extends ImageView
 						// We only display real covers for queries using the album id as key
 						Song song = MediaUtils.getSongByTypeId(mContext, payload.key.mediaType, payload.key.mediaId);
 						if (song != null) {
-							bitmap = song.getSmallCover(mContext);
+							bitmap = song.getCover(mContext, payload.coverSize, payload.front);
 						}
 					} else {
-						bitmap = CoverBitmap.generatePlaceholderCover(mContext, CoverCache.SIZE_SMALL, CoverCache.SIZE_SMALL, payload.title);
-					}
-					if (bitmap == null) {
-						// item has no cover: return a failback
-						bitmap = sFallbackBitmap;
-					}
-				}
-				// bitmap is non null: store in LRU cache and draw it
-				sBitmapLruCache.put(payload.key, bitmap);
-				sUiHandler.sendMessage(sUiHandler.obtainMessage(MSG_DRAW_COVER, payload));
-				break;
-			}
-			case MSG_CREATE_COVER_BIG: {
-				// This message was sent due to a cache miss, but the cover might got cached in the meantime
-				Bitmap bitmap = sBitmapLruCache.get(payload.key);
-				if (bitmap == null) {
-					if (payload.key.mediaType == MediaUtils.TYPE_ALBUM) {
-						// We only display real covers for queries using the album id as key
-						Song song = MediaUtils.getSongByTypeId(mContext, payload.key.mediaType, payload.key.mediaId);
-						if (song != null) {
-							bitmap = song.getCover(mContext, payload.front);
-						}
-					} else {
-						bitmap = CoverBitmap.generatePlaceholderCover(mContext, CoverCache.SIZE_LARGE, CoverCache.SIZE_LARGE, payload.title);
+						bitmap = CoverBitmap.generatePlaceholderCover(mContext, payload.coverSize, payload.coverSize, payload.title);
 					}
 					if (bitmap == null) {
 						// item has no cover: return a failback
@@ -201,21 +176,22 @@ public class LazyCoverView extends ImageView
 	 * @param type The Media type
 	 * @param id The id of this media type to query
 	 */
-	public void setCover(int type, long id, String title, boolean front) {
-		mExpectedKey = new CoverCache.CoverKey(type, id, CoverCache.SIZE_SMALL, front);
-		if (drawFromCache(mExpectedKey, false) == false) {
-			CoverMsg payload = new CoverMsg(mExpectedKey, this, title, front);
-			sHandler.sendMessage(sHandler.obtainMessage(MSG_CREATE_COVER, payload));
-		}
+	public void setCover(int type, long id, String title) {
+		setCover(type, id, title, true, CoverCache.SIZE_SMALL);
 	}
 
-	public void setBigCover(int type, long id, String title, boolean front) {
-		mExpectedKey = new CoverCache.CoverKey(type, id, CoverCache.SIZE_LARGE, front);
-		Log.e("myTag", "This is my message");
+	/**
+	 * Attempts to set the image of this cover
+	 * Must be called from an UI thread
+	 *
+	 * @param type The Media type
+	 * @param id The id of this media type to query
+	 */
+	public void setCover(int type, long id, String title, boolean front, int coverSize) {
+		mExpectedKey = new CoverCache.CoverKey(type, id, coverSize, front);
 		if (drawFromCache(mExpectedKey, false) == false) {
-			CoverMsg payload = new CoverMsg(mExpectedKey, this, title, front);
-			Log.e("myTag", "This is my message, create cover");
-			sHandler.sendMessage(sHandler.obtainMessage(MSG_CREATE_COVER_BIG, payload));
+			CoverMsg payload = new CoverMsg(mExpectedKey, this, title, front, coverSize);
+			sHandler.sendMessage(sHandler.obtainMessage(MSG_CREATE_COVER, payload));
 		}
 	}
 

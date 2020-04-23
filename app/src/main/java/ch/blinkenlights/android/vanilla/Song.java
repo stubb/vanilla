@@ -227,31 +227,17 @@ public class Song implements Comparable<Song> {
 	}
 
 	/**
-	 * Query the large album art for this song.
+	 * Query the small front album art for this song.
 	 *
 	 * @param context A context to use.
 	 * @return The album art or null if no album art could be found
 	 */
 	public Bitmap getCover(Context context) {
-		return getCoverInternal(context, CoverCache.SIZE_LARGE, true);
-	}
-
-	public Bitmap getCover(Context context, boolean front) {
-		return getCoverInternal(context, CoverCache.SIZE_LARGE, front);
-	}
-
-	/**
-	 * Query the small album art for this song.
-	 *
-	 * @param context A context to use.
-	 * @return The album art or null if no album art could be found
-	 */
-	public Bitmap getSmallCover(Context context) {
 		return getCoverInternal(context, CoverCache.SIZE_SMALL, true);
 	}
 
-	public Bitmap getSmallCover(Context context, boolean front) {
-		return getCoverInternal(context, CoverCache.SIZE_SMALL, front);
+	public Bitmap getCover(Context context, int coverSize, boolean front) {
+		return getCoverInternal(context, coverSize, front);
 	}
 
 	/**

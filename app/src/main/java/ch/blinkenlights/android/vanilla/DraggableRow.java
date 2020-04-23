@@ -31,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.CheckedTextView;
 import android.widget.Checkable;
-import android.widget.Toast;
 
 public class DraggableRow extends LinearLayout implements Checkable {
 	/**
@@ -73,7 +72,7 @@ public class DraggableRow extends LinearLayout implements Checkable {
 		mPmark         = (View)this.findViewById(R.id.pmark);
 		mDragger       = (ImageView)this.findViewById(R.id.dragger);
 		mDraggerPadder = (View)this.findViewById(R.id.dragger_padder);
-		mCoverView     = (LazyCoverView)this.findViewById(R.id.cover); //TODO in popup xml übernehmen
+		mCoverView     = (LazyCoverView)this.findViewById(R.id.cover);
 		super.onFinishInflate();
 	}
 
@@ -166,24 +165,13 @@ public class DraggableRow extends LinearLayout implements Checkable {
 		adjustPadding();
 	}
 
-	/*public void setDraggerOnClickListener(View.OnClickListener listener) {
+	public void setDraggerOnClickListener(View.OnClickListener listener) {
 		TypedValue v = new TypedValue();
 		getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, v, true);
 
 		mDragger.setBackgroundResource(v.resourceId);
 		mDragger.setOnClickListener(listener);
 	}
-
-	public void setCoverOnClickListener(View.OnClickListener listener) {
-		Context context = getContext();
-		CharSequence text = "Hello toast!";
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-
-		mCoverView.setOnClickListener(listener);
-	}*/
 
 	/**
 	 * Sets the text to given string.

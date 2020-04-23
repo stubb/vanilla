@@ -497,15 +497,13 @@ public class MediaAdapter
 			holder = new ViewHolder();
 			row.setTag(holder);
 
-			//row.setDraggerOnClickListener(this);
-			//row.setCoverOnClickListener(this);
+			row.setDraggerOnClickListener(this);
 			row.showDragger(mExpandable);
 		} else {
 			row = (DraggableRow)convertView;
 			holder = (ViewHolder)row.getTag();
 		}
 
-		// (LazyCoverView)this.findViewById(R.id.cover);
 		row.findViewById(R.id.cover).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -561,11 +559,9 @@ public class MediaAdapter
 		}
 		row.showDuration(duration != -1);
 		row.setDuration(duration);
-		row.getCoverView().setCover(mCoverCacheType, cacheId, holder.title, true);
-		//row.getCoverView().setCoverOnClickListener(this);
+		row.getCoverView().setCover(mCoverCacheType, cacheId, holder.title);
 		return row;
 	}
-
 
 	/**
 	 * Returns the type of the current limiter.
@@ -622,10 +618,10 @@ public class MediaAdapter
 	@Override
 	public void onClick(View view)
 	{
-		/*int id = view.getId();
+		int id = view.getId();
 		view = (View)view.getParent(); // get view of linear layout, not the click consumer
 		Intent intent = createData(view);
-		mActivity.onItemExpanded(intent);*/
+		mActivity.onItemExpanded(intent);
 	}
 
 	@Override

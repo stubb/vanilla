@@ -51,6 +51,10 @@ public class CoverCache {
 	 * Returned size of large (cover view) album covers
 	 */
 	public final static int SIZE_LARGE = (int)(200 * Resources.getSystem().getDisplayMetrics().density);
+	// TODO
+	public final static boolean COVER_FRONT = true;
+
+	public final static boolean COVER_BACK = false;
 	/**
 	 * Use all cover providers to load cover art
 	 */

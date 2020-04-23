@@ -264,12 +264,6 @@ public class FileSystemAdapter
 		return row;
 	}
 
-	public void setBigCover(int pos, LazyCoverView coverView)
-	{
-		final File file = mFiles[pos];
-		coverView.setImageResource(getImageResourceForFile(file));
-	}
-
 	@Override
 	public void setFilter(String filter)
 	{

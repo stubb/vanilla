@@ -40,7 +40,7 @@ import java.lang.IllegalStateException;
 import java.lang.IllegalArgumentException;
 
 import android.util.Log;
-import android.widget.Toast;
+
 
 
 /**
@@ -146,7 +146,6 @@ public final class CoverView extends View implements Handler.Callback {
 		mBitmapBucket = new BitmapBucket();
 		mScroller = new CoverScroller(context);
 	}
-
 
 	/**
 	 * Configures and sets up this view

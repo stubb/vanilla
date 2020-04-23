@@ -39,10 +39,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.util.LruCache;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.PopupWindow;
 
 import java.util.Arrays;
@@ -50,9 +48,6 @@ import java.util.ArrayList;
 
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
 
 
 /**
@@ -338,7 +333,6 @@ public class LibraryPagerAdapter
 			CoordClickListener ccl = new CoordClickListener(this);
 			view = (ListView)inflater.inflate(R.layout.listview, null);
 			ccl.registerForOnItemLongClickListener(view);
-			// TODO listener für eine row
 			view.setOnItemClickListener(this);
 			view.setTag(type);
 
@@ -882,12 +876,6 @@ public class LibraryPagerAdapter
 		Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
 		int type = (Integer)((View)view.getParent()).getTag();
 
-		CharSequence text = "x:" + x + "; y:" + y + ";";
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(view.getContext(), text, duration);
-		toast.show();
-
 		if (type == MediaUtils.TYPE_FILE) {
 			return mFilesAdapter.onCreateFancyMenu(intent, view, x, y);
 		}
@@ -898,43 +886,26 @@ public class LibraryPagerAdapter
 
 	@Override
 	/**
+	 * If view is a cover view, create a popup window onClick which can be dismissed by touch
+	 * the popup window itself or taps outside of the popup window.
 	 *
+	 * If its not a cover view it simply forwards the click to the underlying filesAdapter
+	 * or activity.
 	 */
 	public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
 		if (view.getId() == R.id.cover) {
 			LayoutInflater inflater = mActivity.getLayoutInflater();
-			View popupView = inflater.inflate(R.layout.popup_window, null);
-			LazyCoverView foo = popupView.findViewById(R.id.kilicover);
-			foo.setVisibility(View.VISIBLE);
-			// TODO bisher nur chacheId mit kleinem Bild ...
+			View popupView = inflater.inflate(R.layout.popup_backcover, null);
+			LazyCoverView backcoverView = popupView.findViewById(R.id.popup_backcover_LazyView);
+			backcoverView.setVisibility(View.VISIBLE);
 			long myCacheId = mCurrentAdapter.getItemId(position);
-			foo.setBigCover(/*(Integer) parent.getTag()*/MediaUtils.TYPE_ALBUM, myCacheId, "wumpe", false);
+			backcoverView.setCover(MediaUtils.TYPE_ALBUM, myCacheId, null, false, CoverCache.SIZE_LARGE);
 
-			// mCurrentAdapter
-
-			//int type = (Integer)((View)view.getParent().getParent().getParent()).getTag();
-
-		/*	int type = (Integer)parent.getTag();
-			int type1 = (Integer)((View)view.getParent()).getTag();
-			int type2= (Integer)((View)view.getParent().getParent()).getTag();
-			if (type == MediaUtils.TYPE_FILE) {
-				//mFilesAdapter.onItemClicked(intent);
-				mFilesAdapter.setBigCover(position, foo);
-			} else {
-				//mActivity.onItemClicked(intent);
-			}*/
-
-			// create the popup window
 			int width = LinearLayout.LayoutParams.WRAP_CONTENT;
 			int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-			boolean focusable = true; // lets taps outside the popup also dismiss it
-			final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-			// show the popup window
-			// which view you pass in doesn't matter, it is only used for the window tolken
+			final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
 			popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-			// dismiss the popup window when touched
 			popupView.setOnTouchListener(new View.OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -942,8 +913,6 @@ public class LibraryPagerAdapter
 					return true;
 				}
 			});
-
-
 		}
 		else {
 			Intent intent = id == LibraryAdapter.HEADER_ID ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
